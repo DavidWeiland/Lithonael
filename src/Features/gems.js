@@ -50,6 +50,32 @@ const { actions, reducer } = createSlice({
   }
 })
 
+export async function createGem(store, object, image, token) {
+  const status = selectGems(store.getState()).status
+  const body = new FormData()
+  body.append('gemObject', JSON.stringify(object))
+  body.append('image', image, object.name)
+  const axiosBody = {
+    method: 'post',
+    url: URL,
+    headers:{authorization:`Bearer ${token}`},
+    data:body
+  }
+  if (status === 'pending' || status === 'updating') {
+    return
+  }
+  store.dispatch(actions.fetching())
+  try {
+    const response = await axios(axiosBody)
+    const data = await response.data
+    store.dispatch(actions.resolved(data))
+    getAllGems(store)
+  }
+  catch (error) {
+    store.dispatch(actions.rejected(error))
+  }
+}
+
 export async function getAllGems(store) {
   const status = selectGems(store.getState()).status
     const axiosBody = {
@@ -70,6 +96,27 @@ export async function getAllGems(store) {
   }
 }
 
+export async function deleteOneGem(store, gemId, token) {
+  const status = selectGems(store.getState()).status
+  const axiosBody = {
+    method: 'delete',
+    url: `${URL}${gemId}`,
+    headers:{authorization:`Bearer ${token}`}
+  }
+  if (status === 'pending' || status === 'updating') {
+    return
+  }
+  store.dispatch(actions.fetching())
+  try {
+    const response = await axios(axiosBody)
+    const data = await response.data
+    store.dispatch(actions.resolved(data))
+    getAllGems(store)
+  }
+  catch (error) {
+    store.dispatch(actions.rejected(error))
+  }
+}
 export const { fetching, resolved, rejected } = actions
 
 export default reducer
