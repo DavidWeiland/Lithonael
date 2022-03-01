@@ -1,6 +1,10 @@
 export const selectAdmin = (state) => state.admin
 
-export const selectGem = (state) => state.gem
+const voidGem = { status: 'void' }
+
+export const selectGem = (gemId) => (state) => {
+  return state.gem[ gemId ] ?? voidGem
+}
 
 export const selectGems = (state) => state.gems
 

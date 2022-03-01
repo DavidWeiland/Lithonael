@@ -4,99 +4,74 @@ import axios from 'axios'
 
 const URL = `${process.env.REACT_APP_API_URL}${process.env.REACT_APP_GEM_URL}`
 
-const initialState = {
-  status: 'void',
-  data: null,
-  error:null
+const initialState = {}
+
+function setVoidIfUndefined(draft, gemId) {
+  if (draft[ gemId ] === undefined) {
+    draft[ gemId ] = {status:'void'}
+  }
 }
 
 const { actions, reducer } = createSlice({
   name: 'gem',
   initialState,
   reducers: {
-    fetching: (draft, action) => {
-      if (draft.status === 'void') {
-        draft.status = 'pending'
-        return
+    fetching: {
+      prepare: (gemId) => ({
+        payload: { gemId },
+      }),
+      reducer: (draft, action) => {
+        setVoidIfUndefined(draft, action.payload.gemId)
+        if (draft[ action.payload.gemId ].status === 'void') {
+          draft[ action.payload.gemId ].status = 'pending'
+          return
+        }
+        if (draft[ action.payload.gemId ].status === 'rejected') {
+          draft[ action.payload.gemId ].error = null
+          draft[ action.payload.gemId ].status = 'pending'
+          return
+        }
+        if (draft[ action.payload.gemId ].status === 'resolved') {
+          draft[ action.payload.gemId ].status = 'updating'
+          return
+        }
       }
-      if (draft.status === 'rejected') {
-        draft.error = null
-        draft.status = 'pending'
-        return
-      }
-      if (draft.status === 'resolved') {
-        draft.status = 'updating'
-        return
-      }
-      return
     },
-    resolved: (draft, action) => {
-      if (draft.status === 'pending' || draft.status === 'updating') {
-        draft.data = action.payload
-        draft.status = 'resolved'
+    resolved: {
+      prepare: (gemId, data) => ({
+        payload: { gemId, data },
+      }),
+      reducer: (draft, action) => {
+        setVoidIfUndefined(draft, action.payload.gemId)
+        if (draft[ action.payload.gemId ].status === 'pending' || draft[ action.payload.gemId ].status === 'updating') {
+          draft[ action.payload.gemId ].data = action.payload.data
+          draft[ action.payload.gemId ].status = 'resolved'
+          return
+        }
         return
       }
-      return
     },
-    rejected: (draft, action) => {
-      if (draft.status === 'pending' || draft.status === 'updating') {
-        draft.data = null
-        draft.error = action.payload
-        draft.status = 'rejected'
+    rejected: {
+      prepare: (gemId, data) => ({
+        payload: { gemId, data },
+      }),
+      reducer: (draft, action) => {
+        setVoidIfUndefined(draft, action.payload.gemId)
+        if (draft[ action.payload.gemId ].status === 'pending' || draft[ action.payload.gemId ].status === 'updating') {
+          draft[ action.payload.gemId ].data = null
+          draft[ action.payload.gemId ].error = action.payload.error
+          draft[ action.payload.gemId ].status = 'rejected'
+          return
+        }
         return
       }
-      return
     }
   }
 })
 
-export async function createGem(store, object, image, token) {
-  const status = selectGem(store.getState()).status
-  const body = new FormData()
-  body.append('gemObject', JSON.stringify(object))
-  body.append('image', image, object.name)
-  const axiosBody = {
-    method: 'post',
-    url: URL,
-    headers:{authorization:`Bearer ${token}`},
-    data:body
-  }
-  if (status === 'pending' || status === 'updating') {
-    return
-  }
-  store.dispatch(actions.fetching())
-  try {
-    const response = await axios(axiosBody)
-    const data = await response.data
-    store.dispatch(actions.resolved(data))
-  }
-  catch (error) {
-    store.dispatch(actions.rejected(error))
-  }
-}
-
-export async function getAllGem(store) {
-  const status = selectGem(store.getState()).status
-    const axiosBody = {
-    method: 'get',
-    url: URL,
-  }
-  if (status === 'pending' || status === 'updating') {
-    return
-  }
-  store.dispatch(actions.fetching())
-  try {
-    const response = await axios(axiosBody)
-    const data = await response.data
-    store.dispatch(actions.resolved(data))
-  }
-  catch (error) {
-    store.dispatch(actions.rejected(error))
-  }
-}
-
 export async function getOneGem(store, gemId) {
-  const status = selectGem(store.getState()).status
+  const selectGemById = selectGem(gemId)
+  const status = selectGemById(store.getState()).status
     const axiosBody = {
     method: 'get',
     url: `${URL}${gemId}`,
@@ -104,19 +79,20 @@ export async function getOneGem(store, gemId) {
   if (status === 'pending' || status === 'updating') {
     return
   }
-  store.dispatch(actions.fetching())
+  store.dispatch(actions.fetching(gemId))
   try {
     const response = await axios(axiosBody)
     const data = await response.data
-    store.dispatch(actions.resolved(data))
+    store.dispatch(actions.resolved(gemId, data))
   }
   catch (error) {
-    store.dispatch(actions.rejected(error))
+    store.dispatch(actions.rejected(gemId, error))
   }
 }
 
 export async function modifyOneGem(store, gemId, object, image, token) {
-  const status = selectGem(store.getState()).status
+  const selectGemById = selectGem(gemId)
+  const status = selectGemById(store.getState()).status
   let body
   if (typeof image === 'string') {
     object.image = image
@@ -135,20 +111,21 @@ export async function modifyOneGem(store, gemId, object, image, token) {
   if (status === 'pending' || status === 'updating') {
     return
   }
-  store.dispatch(actions.fetching())
+  store.dispatch(actions.fetching(gemId))
   try {
     const response = await axios(axiosBody)
     const data = await response.data
-    store.dispatch(actions.resolved(data))
+    store.dispatch(actions.resolved(gemId, data))
     getOneGem(store, gemId)
   }
   catch (error) {
-    store.dispatch(actions.rejected(error))
+    store.dispatch(actions.rejected(gemId, error))
   }
 }
 
-export async function deleteOneGem(store, gemId, token) {
-  const status = selectGem(store.getState()).status
+/* export async function deleteOneGem(store, gemId, token) {
+  const selectGemById = selectGem(gemId)
+  const status = selectGemById(store.getState()).status
   const axiosBody = {
     method: 'delete',
     url: `${URL}${gemId}`,
@@ -166,7 +143,7 @@ export async function deleteOneGem(store, gemId, token) {
   catch (error) {
     store.dispatch(actions.rejected(error))
   }
-}
+} */
 
 export const { fetching, resolved, rejected } = actions
 
