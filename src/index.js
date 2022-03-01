@@ -10,6 +10,7 @@ import GemCreator from './Pages/GemCreator';
 import Error from './Pages/Error'
 import { Provider } from 'react-redux'
 import store from './Utils/store'
+import GemViewer from './Pages/GemViewer';
 
 ReactDOM.render(
   <Provider store={store}>
@@ -19,6 +20,7 @@ ReactDOM.render(
         <Routes>
           <Route path='/' element={<Home />} />
           <Route path='/wikigems' element={<GemsList />} />
+          <Route path='/wikigems/:id' element={<GemViewer/>} />
           <Route path='/admin' element={<AdminApp />} />
           <Route path='/admin/gemcreator' element={<GemCreator />} />
           <Route path='*' element={<Error />} />
