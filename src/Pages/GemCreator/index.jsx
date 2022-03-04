@@ -290,7 +290,7 @@ export default function GemCreator() {
         </StyledImageContainer>
         
         <StyledGeneralContainer>
-          <StyledInputName type='text' id='Name' name='Name' value={name} onChange={(e) => setName(e.target.value)} placeholder='Nom' required/>
+          <StyledInputName type='text' id='Name' name='Name' value={name} onChange={(e) => setName(e.target.value.toUpperCase())} placeholder='Nom' required/>
           
           <StyledInputNameOrigin type='text' id='NameOrigin' name='NameOrigin' value={nameOrigin} onChange={(e) => setNameOrigin(e.target.value)} placeholder="Nom d'origine" />
           
@@ -501,7 +501,6 @@ const StyledInputName = styled.input`
   font-size:27px;
   font-weight:700;
   border-radius: 15px 15px 0 0;
-  text-transform:uppercase
 `
 const StyledInputNameOrigin = styled.input`
   flex:1;
