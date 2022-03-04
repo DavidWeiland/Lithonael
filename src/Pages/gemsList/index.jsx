@@ -2,15 +2,21 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { selectGems } from "../../Utils/selectors";
 import { useSelector } from "react-redux";
+import { Loader } from "../../Utils/Styles/Loader";
 
 export default function GemsList() {
   
   const gemsStatus = useSelector(selectGems).status
   const gemsList = useSelector(selectGems).data?.gemsList
   
+  if (gemsStatus === 'pending' || gemsStatus === 'updating') {
+    return (
+      <Loader />
+    )
+  }
+
   return (
     <div>
-      <span>Status : {gemsStatus}</span>
       <ul>
       {gemsList?.map((index) =>
         <li

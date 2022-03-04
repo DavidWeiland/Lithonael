@@ -4,12 +4,14 @@ import { useSelector, useStore } from 'react-redux'
 import { selectAdmin, selectGems } from '../../Utils/selectors'
 import { createGem } from '../../Features/gems'
 import styled from "styled-components";
+import { Loader } from "../../Utils/Styles/Loader";
 
 export default function GemCreator() {
   const store = useStore()
   const navigate = useNavigate()
   
   const admin = useSelector(selectAdmin)
+  const adminStatus = admin.status
   const adminId = admin.data?.adminId
   const token = admin.data?.token
   
@@ -257,13 +259,19 @@ export default function GemCreator() {
   }
 
   // warning utilisateur non connecté
-  /* if (!adminId) {
+  /* if (adminStatus === 'void') {
     return (
       <div>
         Vous devez être connecté en tant qu'administrateur pour afficher la page ...
       </div>
     )
   } */
+
+  if (adminStatus === 'pending' || adminStatus === 'updating' || gemsStatus === 'pending' || gemsStatus === 'updating') {
+    return (
+      <Loader />
+    )
+  }
 
   return (
     <StyledMainContainer>
@@ -410,10 +418,10 @@ export default function GemCreator() {
         </StyledForm>
       </StyledInfoContainer>
       
-      <StyledButton value='Save' onClick={create}>
+      <StyledButton value='Save' onClick={create} disabled={adminId?false:true}>
         Sauvegarder
       </StyledButton>
-      
+      <p style={{visibility:`${adminId?'hidden':'visible'}`}}>Vous devez être connecté en tant qu'administrateur pour valider la création de la pierre</p>
     </StyledMainContainer>
   );
 }
