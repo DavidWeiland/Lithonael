@@ -12,8 +12,8 @@ export default class ListComponent extends React.Component {
 
     return (
       <StyledUl>
-        {name.map((index,tag) =>
-          <StyledLi key={`${index}-${tag}`}>{index}</StyledLi>
+        {name.map((tag, index) =>
+          <StyledLi key={`${tag}-${index}`}>{tag}</StyledLi>
         )}
       </StyledUl>
     )
