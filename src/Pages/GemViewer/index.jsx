@@ -18,6 +18,11 @@ export default function GemViewer() {
   const gemData = gem.data ?? {}
   const { name, nameOrigin, historyText, chimicalComposition, hardnessMin, hardnessMax, crystalSystem, deposits, colours, descriptionVirtues, physicalVirtues, psychologicalVirtues, image } = gemData
   
+  function paragraphCreator(text) {
+    let newtext = text.split(/\n/g)
+    return (newtext.map((paragraphe, index)=><p key={index}>{paragraphe}<br/></p>))
+  }
+
   if (gem.status === 'void' || gem.status === 'pending' || gem.status === 'updating') {
     return (
       <div>Attend !!</div>
@@ -37,12 +42,12 @@ export default function GemViewer() {
             {nameOrigin}
           </span>
           <p>
-            {historyText}
+            {paragraphCreator(historyText)}
           </p>
         <p>Cette pierre est composée de {chimicalComposition[ 0 ]}. Son Système cristallin est {crystalSystem}. Sa dureté se situe entre {hardnessMin} et {hardnessMax}. On la trouve principalement en : </p>
         <ListComponent name={deposits} />
         <ListComponent name={colours} />
-        <p>{descriptionVirtues} </p>
+        <p>{paragraphCreator(descriptionVirtues)} </p>
         <ListComponent name={physicalVirtues} />
         <ListComponent name={psychologicalVirtues} />
       </StyledPresentationContainer>
