@@ -39,11 +39,12 @@ export default function GemViewer() {
           <p>
             {historyText}
           </p>
-        <p>Cette pierre est composée de {chimicalComposition[ 0 ]}. Son Système cristallin est {crystalSystem}. Sa dureté se situe entre {hardnessMin} et {hardnessMax}. On la trouve principalement en : <ListComponent name={deposits} /></p>
-          <ListComponent name={colours} />
+        <p>Cette pierre est composée de {chimicalComposition[ 0 ]}. Son Système cristallin est {crystalSystem}. Sa dureté se situe entre {hardnessMin} et {hardnessMax}. On la trouve principalement en : </p>
+        <ListComponent name={deposits} />
+        <ListComponent name={colours} />
         <p>{descriptionVirtues} </p>
-          <ListComponent name={physicalVirtues} />
-          <ListComponent name={psychologicalVirtues} />
+        <ListComponent name={physicalVirtues} />
+        <ListComponent name={psychologicalVirtues} />
       </StyledPresentationContainer>
     </StyledMainContainer>
   );
