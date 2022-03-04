@@ -1,23 +1,18 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { Link } from "react-router-dom";
 import { selectGems } from "../../Utils/selectors";
-import { getAllGems } from "../../Features/gems";
-import { useSelector, useStore } from "react-redux";
+import { useSelector } from "react-redux";
 
 export default function GemsList() {
-  const store = useStore()
-  useEffect(() => {
-    getAllGems(store)
-  }, [ store ])
   
-  const GemsStatus = useSelector(selectGems).status
-  const GemsData = useSelector(selectGems).data
+  const gemsStatus = useSelector(selectGems).status
+  const gemsList = useSelector(selectGems).data?.gemsList
   
   return (
     <div>
-      <span>Status : {GemsStatus}</span>
+      <span>Status : {gemsStatus}</span>
       <ul>
-      {GemsData?.map((index) =>
+      {gemsList?.map((index) =>
         <li
           key={`${index}-${index.name}`}
         > {index.name}
