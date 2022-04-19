@@ -1,14 +1,18 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useSelector, useStore } from 'react-redux'
 import { selectGem } from '../../Utils/selectors'
 import { getOneGem } from '../../Features/gem'
 import styled from "styled-components";
 import ListComponent from '../../Components/ListComponent'
 import { useParams } from "react-router";
+import { GemModifier } from "../GemModifier";
 
 export default function GemViewer() {
   const store = useStore()
   const { id: gemId } = useParams()
+  
+  const [modif, setModif]=useState(false)
+  
 
   useEffect(() => {
     getOneGem(store, gemId)
@@ -29,28 +33,38 @@ export default function GemViewer() {
     )
   }
 
+  const goNav = () => {
+  setModif(!modif)
+  }
+  
   return (
+
     <StyledMainContainer>
-      <StyledPresentationContainer>
-        <StyledImageContainer>
-          <StyledImage src={image} alt={name} />
-        </StyledImageContainer>
+      {!modif ? (
+        <StyledPresentationContainer>
+          <StyledImageContainer>
+            <StyledImage src={image} alt={name} />
+          </StyledImageContainer>
           <StyledH1>
             {name}
           </StyledH1>
           <span>
             {nameOrigin}
           </span>
-          <p>
+          <div>
             {paragraphCreator(historyText)}
-          </p>
-        <p>Cette pierre est composée de {chimicalComposition[ 0 ]}. Son Système cristallin est {crystalSystem}. Sa dureté se situe entre {hardnessMin} et {hardnessMax}. On la trouve principalement en : </p>
-        <ListComponent name={deposits} />
-        <ListComponent name={colours} />
-        <p>{paragraphCreator(descriptionVirtues)} </p>
-        <ListComponent name={physicalVirtues} />
-        <ListComponent name={psychologicalVirtues} />
-      </StyledPresentationContainer>
+          </div>
+          <p>Cette pierre est composée de {chimicalComposition[ 0 ]}. Son Système cristallin est {crystalSystem}. Sa dureté se situe entre {hardnessMin} et {hardnessMax}. On la trouve principalement en : </p>
+          <ListComponent name={deposits} />
+          <ListComponent name={colours} />
+          <div>{paragraphCreator(descriptionVirtues)} </div>
+          <ListComponent name={physicalVirtues} />
+          <ListComponent name={psychologicalVirtues} />
+          <button onClick={()=>setModif(!modif)}>Modifier</button>
+        </StyledPresentationContainer>
+      ) : (
+        <GemModifier data={gemData ?? {}} retour={goNav} />
+      )}
     </StyledMainContainer>
   );
 }

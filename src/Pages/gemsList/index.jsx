@@ -1,14 +1,15 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React, { useState } from "react";
 import { selectGems } from "../../Utils/selectors";
 import { useSelector } from "react-redux";
 import { Loader } from "../../Utils/Styles/Loader";
+import { LithoCard } from "../../Components/Card";
+import SearchComponent from "../../Components/SearchComponent"
 
 export default function GemsList() {
-  
   const gemsStatus = useSelector(selectGems).status
-  const gemsList = useSelector(selectGems).data?.gemsList
-  
+  const gemsData = useSelector(selectGems).data ?? {}
+  const [gemsList, setGemsList] = useState(gemsData ?? [])
+
   if (gemsStatus === 'pending' || gemsStatus === 'updating') {
     return (
       <Loader />
@@ -16,17 +17,22 @@ export default function GemsList() {
   }
 
   return (
-    <div>
-      <ul>
-      {gemsList?.map((index) =>
-        <li
-          key={`${index}-${index.name}`}
-        > {index.name}
-          <img src={index.image} alt={index.name} style={{maxWidth:'50px', maxHeight:'50px'}} />
-          <Link to={`/wikigems/${index._id}`}>Vers la fiche de {index.name}</Link>
-        </li>
-      )}
-      </ul>
+    <div className="main_container_with_search">
+      
+      <SearchComponent gemsData={gemsData} gemsList={gemsList} updateGemsList={setGemsList} />
+
+     <div style={{display:"flex", flexFlow:"wrap", flex:9}}>
+        {gemsList?.map(({index, name, image, _id}) =>
+          <LithoCard
+            key={`${index}-${name}`}
+            objet="pierre"
+            id={_id}
+            name={name}
+            image={image}
+          />
+        )}
+      </div>
+      
     </div>
 )
 }
