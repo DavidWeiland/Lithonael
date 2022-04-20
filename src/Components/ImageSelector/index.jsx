@@ -1,18 +1,16 @@
 import { useState } from "react"
 import styled from "styled-components"
 
-export const ImageSelector = ({data, retour, feedback}) => {
-  //const [image, setImage]=useState()
-  
-  const { imageUrl, name } = data ?? {}
-  const [ imageShower, setImageShower ] = useState(imageUrl)
+export const ImageSelector = ({data, feedback}) => {
+   
+  const { image, name } = data ?? {}
+  const [ imageShower, setImageShower ] = useState(image)
   
 
 const imageReader = (e) => {
     e.stopPropagation()
     e.preventDefault()
     const file = e.target.files[ 0 ]
-    //setImage(file)
     feedback(file)
     const fileReader = new FileReader()
     fileReader.onload = (progressEvent) => {

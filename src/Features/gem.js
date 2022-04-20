@@ -116,7 +116,6 @@ export async function modifyOneGem(store, gemId, object, image, token) {
     const response = await axios(axiosBody)
     const data = await response.data
     store.dispatch(actions.resolved(gemId, data))
-    getOneGem(store, gemId)
   }
   catch (error) {
     store.dispatch(actions.rejected(gemId, error))
