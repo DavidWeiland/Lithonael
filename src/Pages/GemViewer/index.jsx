@@ -5,22 +5,25 @@ import { getOneGem } from '../../Features/gem'
 import styled from "styled-components";
 import ListComponent from '../../Components/ListComponent'
 import { useParams } from "react-router";
-import { GemModifier } from "../GemModifier";
+import GemCreator from "../GemCreator";
 
 export default function GemViewer() {
   const store = useStore()
   const { id: gemId } = useParams()
   
-  const [modif, setModif]=useState(false)
-  
-
-  useEffect(() => {
-    getOneGem(store, gemId)
-  }, [store, gemId])
   
   const gem = useSelector(selectGem(gemId))
   const gemData = gem.data ?? {}
   const { name, nameOrigin, historyText, chimicalComposition, hardnessMin, hardnessMax, crystalSystem, deposits, colours, descriptionVirtues, physicalVirtues, psychologicalVirtues, image } = gemData
+  const [modif, setModif]=useState(false)
+  
+  useEffect(() => {
+    getOneGem(store, gemId)
+  }, [store, gemId])
+  
+  const goNav = () => {
+    setModif(!modif)
+  }
   
   function paragraphCreator(text) {
     let newtext = text.split(/\n/g)
@@ -33,9 +36,6 @@ export default function GemViewer() {
     )
   }
 
-  const goNav = () => {
-  setModif(!modif)
-  }
   
   return (
 
@@ -63,7 +63,7 @@ export default function GemViewer() {
           <button onClick={()=>setModif(!modif)}>Modifier</button>
         </StyledPresentationContainer>
       ) : (
-        <GemModifier data={gemData ?? {}} retour={goNav} />
+          <GemCreator data={gemData ?? {}} gemId={gemId} retour={goNav} />
       )}
     </StyledMainContainer>
   );

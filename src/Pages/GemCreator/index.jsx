@@ -3,12 +3,13 @@ import { useNavigate } from "react-router";
 import { useSelector, useStore } from 'react-redux'
 import { selectAdmin, selectGems } from '../../Utils/selectors'
 import { createGem } from '../../Features/gems'
+import {modifyOneGem} from '../../Features/gem'
 import styled from "styled-components";
 import { Loader } from "../../Utils/Styles/Loader";
 import { ImageSelector } from "../../Components/ImageSelector";
 import { FormForCreateOrModifyItem } from "../../Components/FormForCreateOfModifyItem";
 
-export default function GemCreator() {
+export default function GemCreator({data, gemId, retour}) {
   const store = useStore()
   const navigate = useNavigate()
   
@@ -28,22 +29,22 @@ export default function GemCreator() {
   }, [ navigate, gemsStatus ])
 
   // Elements du body à envoyer
-  const [ name, setName ] = useState("")
-  const [ nameOrigin, setNameOrigin ] = useState("")
-  const [ historyText, setHistoryText ] = useState("")
-  const [ deposits, setDeposits ] = useState([])
-  const [ chimicalComposition, setChimicalComposition ] = useState([])
-  const [ hardnessMin, setHardnessMin ] = useState("")
-  const [ hardnessMax, setHardnessMax ] = useState("")
-  const [ crystalSystem, setCrystalSystem ] = useState([])
-  const [ colours, setColours ] = useState([])
-  const [ descriptionVirtues, setDescriptionVirtues ] = useState("")
-  const [ physicalVirtues, setPhysicalVirtues ] = useState([])
-  const [ psychologicalVirtues, setPsychologicalVirtues ] = useState([])
-  const [ image, setImage ] = useState("")
+  const [ name, setName ] = useState(data?data.name:"")
+  const [ nameOrigin, setNameOrigin ] = useState(data?data.nameOrigin:"")
+  const [ historyText, setHistoryText ] = useState(data?data.historyText:"")
+  const [ deposits, setDeposits ] = useState(data?data.deposits:[])
+  const [ chimicalComposition, setChimicalComposition ] = useState(data?data.chimicalComposition:[])
+  const [ hardnessMin, setHardnessMin ] = useState(data?data.hardnessMin:"")
+  const [ hardnessMax, setHardnessMax ] = useState(data?data.hardnessMax:"")
+  const [ crystalSystem, setCrystalSystem ] = useState(data?data.crystalSystem:[])
+  const [ colours, setColours ] = useState(data?data.colours:[])
+  const [ descriptionVirtues, setDescriptionVirtues ] = useState(data?data.descriptionVirtues:"")
+  const [ physicalVirtues, setPhysicalVirtues ] = useState(data?data.physicalVirtues:[])
+  const [ psychologicalVirtues, setPsychologicalVirtues ] = useState(data?data.psychologicalVirtues:[])
+  const [ image, setImage ] = useState(data?data.image:"")
   
-  // envoi du l'objet créé
-  function create() {
+  // envoi du l'objet créé ou modifié
+  function save() {
     const body = {
       userId : adminId,
       name,
@@ -60,8 +61,13 @@ export default function GemCreator() {
       psychologicalVirtues,
       image:""
     }
-    createGem(store, body, image, token)
-    navigate('/wikigems')
+    if(data){
+      modifyOneGem(store, gemId, body, image, token)
+      retour()
+    } else {
+      createGem(store, body, image, token)
+      navigate('/wikigems')
+    }
   }
 
   // warning utilisateur non connecté
@@ -81,11 +87,13 @@ export default function GemCreator() {
   
   return (
     <StyledMainContainer>
-      <StyledH1>
+      {data ? <StyledH1>
+        Modification d'une pierre
+      </StyledH1> : <StyledH1>
         Création d'une pierre
-      </StyledH1>
+      </StyledH1>}
       <StyledPresentationContainer>
-        <ImageSelector feedback={(file) => setImage(file)} />
+        <ImageSelector feedback={(file) => setImage(file)} data={data}/>
         <StyledGeneralContainer>
           <StyledInputName type='text' id='Name' name='Name' value={name} onChange={(e) => setName(e.target.value.toUpperCase())} placeholder='Nom' required/>
           <StyledInputNameOrigin type='text' id='NameOrigin' name='NameOrigin' value={nameOrigin} onChange={(e) => setNameOrigin(e.target.value)} placeholder="Nom d'origine" />
@@ -127,7 +135,7 @@ export default function GemCreator() {
         <FormForCreateOrModifyItem base={gemsList} name='PsychologicalVirtues' value='psychologicalVirtues' source={psychologicalVirtues} setSource={(e)=>setPsychologicalVirtues(e)}/>
       </StyledInfoContainer>
       
-      <StyledButton value='Save' onClick={create} disabled={adminId?false:true}>
+      <StyledButton value='Save' onClick={save} disabled={adminId?false:true}>
         Sauvegarder
       </StyledButton>
       <p style={{visibility:`${adminId?'hidden':'visible'}`}}>Vous devez être connecté en tant qu'administrateur pour valider la création de la pierre</p>
