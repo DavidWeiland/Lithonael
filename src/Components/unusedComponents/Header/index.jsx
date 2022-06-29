@@ -2,9 +2,9 @@ import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import { NavLink } from "react-router-dom";
 import { useSelector, useStore } from 'react-redux'
-import { selectAdmin } from '../../Utils/selectors'
-import { getAllGems } from "../../Features/gems";
-import { loginAdmin, resetAdmin } from '../../Features/admin'
+import { selectAdmin } from '../../../Utils/selectors'
+import { getAllGems } from "../../../Features/gems";
+import { loginAdmin, resetAdmin } from '../../../Features/admin'
 
 export default function Header() {
   const store = useStore()

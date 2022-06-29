@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import styled from "styled-components";
-import CheckboxComponent from "../../Components/Checkbox"
+import CheckboxComponent from "../../Checkbox"
 
 export default function SearchComponent({gemsData, gemsList, updateGemsList}) {
 
