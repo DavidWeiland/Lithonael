@@ -1,9 +1,10 @@
-import React from 'react'
+import React, {useEffect} from 'react'
 import styled from "styled-components";
 import { useNavigate, NavLink } from 'react-router-dom'
 import { useSelector, useStore } from 'react-redux'
 import { selectAdmin } from '../../Utils/selectors'
 import { resetAdmin } from '../../Features/admin'
+import { getAllGems } from "../../Features/gems";
 import { Connect } from '../ConnectComponent';
 import colors from '../../Utils/Styles/colors';
 
@@ -12,12 +13,15 @@ export const Menu = () => {
   const admin = useSelector(selectAdmin)
   const adminId = admin.data?.adminId
   const navigate = useNavigate()
-    
+
+  // récupère les gems
+  useEffect(() => {
+    getAllGems(store)
+  }, [ store ])
+  
   const reset = () => {
     resetAdmin(store)
-  }
-  const goTo = (path) => {
-    navigate(path)
+    navigate('/')
   }
   
   //connexion component
@@ -60,13 +64,16 @@ export const Menu = () => {
 
 const StyledContainer = styled.div`
   margin: 0;
-  width: 250px;
+  width: 15%;
   height: 100vh;
   background: ${colors.secondary};
   display:flex;
   flex-direction:column;
   justify-content :center;
   align-items:center;
+  position:relative;
+  top:0;
+  left:0;
 `
 const StyledNavList = styled.div`
   display:flex;
@@ -86,11 +93,11 @@ const StyledButton = styled.button`
 `
 
 const StyledTitle = styled.h1`
-  width: 250px;
-  height: 100px;
+  width: 95%;
+  height: auto;
   font-family: 'Alex Brush';
   font-style: normal;
-  font-weight: 400;
+  font-weight: 100;
   font-size: 64px;
   line-height: 80px;
   display: flex;
