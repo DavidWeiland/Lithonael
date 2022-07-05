@@ -5,6 +5,7 @@ import { Loader } from "../../Utils/Styles/Loader";
 import { Card } from "../../Components/Card";
 import {TitleOfPage} from '../../Components/TitleOfPage'
 import { Button } from "../../Components/Button";
+import GemViewer from "../../Components/Viewer";
 import styled from "styled-components";
 import colors from "../../Utils/Styles/colors";
 
@@ -13,6 +14,7 @@ export default function GemsList() {
   const gemsData = useSelector(selectGems).data ?? {}
   const [gemsList, setGemsList] = useState(gemsData ?? [])
   const [ search, setSearch ] = useState("")
+  const [dataViewerId, setDataViewerId] = useState('')
 
   if (gemsStatus === 'pending' || gemsStatus === 'updating') {
     return (
@@ -30,41 +32,74 @@ export default function GemsList() {
     setGemsList(gemsData)
     setSearch('')
   }
-
+  
+  //const gemData = gemsData.filter(gem=>gem._id===dataViewerId)
 
   return (
     <div className="main_container">
       <TitleOfPage>WikiGems</TitleOfPage>
-      <StyledSearchWrapper>
-        <StyledInput type="text" id="search" name="search" placeholder="Search" onChange={(e) => setSearch(e.target.value)} value={search} />
-        <Button action={searchAction}>Search</Button>
-      </StyledSearchWrapper>
+      <div style={{ display: 'flex' }}>
+        <StyledLeftWindow>
+          <StyledSearchWrapper>
+            <StyledInput type="text" id="search" name="search" placeholder="Search" onChange={(e) => setSearch(e.target.value)} value={search} />
+            <Button action={searchAction}>Search</Button>
+          </StyledSearchWrapper>
 
-      {gemsList.length === 0 ? (
-        <div>
-          <Button style={{marginTop: '50px'}} action={resetSearchAction}>Créer {search.toUpperCase()}</Button> <Button style={{marginTop: '50px'}} action={resetSearchAction}>Annuler</Button>
-        </div>
-        ) : (
-        <StyledSearchWrapper>
-          {gemsList?.map(({index, name, nameOrigin, image, _id}) =>
-            <Card
-              key={`${index}-${name}`}
-              objet="pierre"
-              id={_id}
-              name={name}
-              nameOrigin={nameOrigin}
-              image={image}
-              stock="35"
-            />
+          {gemsList.length === 0 ? (
+            <StyledResultWrapper>
+              <Button style={{marginTop: '50px'}} action={resetSearchAction}>Créer {search.toUpperCase()}</Button> <Button style={{marginTop: '50px'}} action={resetSearchAction}>Annuler</Button>
+            </StyledResultWrapper>
+            ) : (
+            <StyledResultWrapper>
+              {gemsList?.map(({index, name, nameOrigin, image, _id}) =>
+                <Card
+                  key={`${index}-${name}`}
+                  objet="pierre"
+                  id={_id}
+                  name={name}
+                  nameOrigin={nameOrigin}
+                  image={image}
+                  stock="35"
+                  onclick={()=>setDataViewerId(_id)}
+                />
+              )}
+            </StyledResultWrapper>
           )}
-        </StyledSearchWrapper>
-      )}
+        </StyledLeftWindow>
+        <StyledRightWindow>
+          {dataViewerId?<GemViewer dataViewerId = {dataViewerId} />:null}
+        </StyledRightWindow>
+      </div>
     </div>
 )
 }
 
+const StyledRightWindow = styled.div`
+  display:flex;
+  flex:3;
+  border:1px solid  ${colors.tertiary};
+  border-radius : 10px;
+  margin:0.5%;
+  padding:1%;
+  height:93vh;
+`
+const StyledLeftWindow = styled.div`
+  display:flex;
+  flex:1;
+  flex-direction:column;
+  height:93vh;
+  margin:0.5%;
+  padding:1%;
+  border:1px solid  ${colors.tertiary};
+  border-radius : 10px;
+`
 const StyledSearchWrapper = styled.div`
   display:flex;
+  width:100%
+`
+const StyledResultWrapper = styled.div`
+  display:flex;
+  flex-direction:column;
   width:100%
 `
 

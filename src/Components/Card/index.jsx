@@ -1,16 +1,9 @@
 import React from "react";
 import PropTypes from "prop-types"
 import styled from "styled-components";
-import { useNavigate } from "react-router-dom";
 import colors from "../../Utils/Styles/colors";
 
-export const Card =({id, name, nameOrigin, image, objet, price, stock})=> {
-  const navigate=useNavigate()
-    
-  const goNav = () => {
-    const path=objet==='bijou'? 'jewel' : 'wikigems'
-    navigate(`/${path}/${id}`)
-  }
+export const Card =({id, name, nameOrigin, image, objet, price, stock, onclick})=> {
 
   const incremente = () => {
     //incremente le stock
@@ -36,7 +29,8 @@ export const Card =({id, name, nameOrigin, image, objet, price, stock})=> {
             </div>
           </StyledStockInfoContainer>
         </StyledStockContainer>}
-      <StyledButton onClick={goNav}><i className="fas fa-pen" /></StyledButton>
+      {/* <StyledButton onClick={goNav}><i className="fas fa-pen" /></StyledButton> */}
+       <StyledButton onClick={onclick}><i className="fas fa-pen" /></StyledButton>
     </StyledMainContainer>
   )
 }
