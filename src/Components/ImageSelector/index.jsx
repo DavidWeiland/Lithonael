@@ -1,8 +1,8 @@
 import { useState } from "react"
 import styled from "styled-components"
+import colors from "../../Utils/Styles/colors"
 
 export const ImageSelector = ({data, feedback}) => {
-   
   const { image, name } = data ?? {}
   const [ imageShower, setImageShower ] = useState(image)
   
@@ -31,25 +31,24 @@ const imageReader = (e) => {
 }
 
 const StyledImageContainer = styled.div`
-  margin:3%;
   display: flex;
   flex-flow: column;
   justify-content:center;
   align-items:center;
-  width:300px;
-  height:300px;
+  width:250px;
+  height:250px;
   background-color:white;
-  border-radius:15px;
-  box-shadow:15px 15px 50px grey;
+  border-radius:10px;
+  box-shadow:${colors.boxShadowDark};
 `
 const StyledImage = styled.img`
   width:98%;
   height:98%;
   margin:1%;
   object-fit: cover;
-  background-color:grey;
+  background-color:${colors.secondary};
   border:0;
-  border-radius:15px 15px 15px 15px;
+  border-radius:10px;
 `
 const StyledFileInput = styled.label`
   border-radius:15px;

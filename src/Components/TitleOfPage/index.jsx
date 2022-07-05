@@ -9,6 +9,9 @@ export const TitleOfPage = ({children}) => {
 const StyledTitle = styled.h1`
   width:100%;
   font-family:'alex brush';
-  text-align:center
-  
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  height:5vh;
+  margin:0 auto;
 `

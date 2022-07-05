@@ -25,7 +25,7 @@ export const Connect = () => {
         <StyledConnectContainer>
             <StyledInput type='text' id='Identifiant' name='Identifiant' value={identifiant} onChange={(e) => setIdentifiant(e.target.value)} placeholder='Identifiant' />
             <StyledInput type='text' id='Password' name='Password' value={password} onChange={(e) => setPassword(e.target.value)} placeholder='Password' />
-        <Button style={{marginTop: '50px'}} action={login}>Soumettre</Button>
+        <Button style={{marginTop: '50px', minWidth:'300px'}} action={login}>Soumettre</Button>
         </StyledConnectContainer>
       </StyledContainer>
   )
